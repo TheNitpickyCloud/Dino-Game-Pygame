@@ -5,16 +5,22 @@ import win32api
 import sys
 import csv
 
-def getInfo(device):
-    settings = win32api.EnumDisplaySettings(device.DeviceName, -1)
-    l = []
-    for varName in ['Color', 'BitsPerPel', 'DisplayFrequency']:
-        l.append(getattr(settings, varName))
+if sys.platform.startswith('win'):
+    import win32api
+    def getFPS():
+        device = win32api.EnumDisplayDevices()
+        settings = win32api.EnumDisplaySettings(device.DeviceName, -1)
+        l = []
+        for varName in ['Color', 'BitsPerPel', 'DisplayFrequency']:
+            l.append(getattr(settings, varName))
 
-    return l[-1]
+        return l[-1]
+else:
+    def getFPS():
+        return 60
 
-device = win32api.EnumDisplayDevices()
-FPS = getInfo(device)
+
+FPS = getFPS()
 
 stage = 2
 score = 0
@@ -78,7 +84,9 @@ def main():
     playerMask = pygame.mask.from_surface(playerImg[0])
     playerX = 200
     playerY = 500
-    jumpcount = 2
+    jumpvelocity = 75
+    gravity = 10
+    yvelocity = 0
     jumping = False
     down = False
     playerRect.center = playerX+64, playerY+64
@@ -228,6 +236,7 @@ def main():
                         pygame.mixer.music.load('assets/jump-sound.mp3')
                         pygame.mixer.music.play(0)
                         jumping = True
+                        yvelocity = -jumpvelocity
                 if event.key == pygame.K_DOWN:
                     down = True
                     playerRect = playerRect.inflate(0, -20)
@@ -235,16 +244,17 @@ def main():
                 if event.key == pygame.K_DOWN:
                     down = False
                     playerY = cactusY
-                    jumpcount = 2
+                    yvelocity = 0
                     playerRect = playerRect.inflate(0, 20)
         
         if jumping and not down:
-            if jumpcount >= -2:
-                playerY -= 0.5 * (jumpcount * abs(jumpcount)) * dt
-                jumpcount -= 0.075
+            if playerY <= cactusY:
+                yvelocity += gravity * dt/50
+                playerY += yvelocity * dt/50
+                # playerY = min(playerY, cactusY)
             else:
                 playerY = cactusY
-                jumpcount = 2
+                yvelocity = -jumpvelocity
                 jumping = False
 
         if down:
@@ -253,7 +263,6 @@ def main():
                 playerY = min(playerY+(2.5*dt), cactusY)
             else:
                 playerY = cactusY
-                jumpcount = 2
                 #down = False
 
         obsX -= obsMove * dt
@@ -318,15 +327,16 @@ while running:
                 sys.exit(0)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos  # gets mouse position
-
-                # checks if mouse position is over the button
-
                 if restartbuttonrect.collidepoint(mouse_pos):
                     saveScore()
                     stage = 0
                 if homebuttonrect.collidepoint(mouse_pos):
                     saveScore()
                     stage = 2
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    saveScore()
+                    stage = 0
     
     else:
         # login with id
@@ -359,10 +369,10 @@ while running:
                 sys.exit(0)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos  # gets mouse position
-
-                # checks if mouse position is over the button
-
                 if buttonrect.collidepoint(mouse_pos) and manager.value != '':
+                    stage = 0
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN and manager.value != '':
                     stage = 0
 
         #pygame.draw.rect(screen, '#ff0000', buttonrect, 1)
