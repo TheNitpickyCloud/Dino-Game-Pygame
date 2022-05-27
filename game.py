@@ -1,7 +1,6 @@
 import pygame
 import pygame_textinput
 import random
-import win32api
 import sys
 import csv
 
