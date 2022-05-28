@@ -2,4 +2,12 @@
  A replica of the chrome dino game, made with pygame
 
 ## Usage
- Download the repository, then go into the dist folder and run game.exe. All the code is in the game.py file and all assets used are in the assets folder.
+ Download the repository, then run game.py
+
+ In case you want to make an exe, install python from [here](https://www.python.org/) and pyinstaller from pip. Open a command line in the dino-game-pygame folder and run the following command:
+
+ ```
+ pyinstaller --onefile --noconsole game.py
+ ```
+
+ This will create a dist folder, where the exe will be.
