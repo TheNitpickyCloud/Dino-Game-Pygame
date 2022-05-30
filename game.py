@@ -203,13 +203,13 @@ def main():
 
     # collision check
     def collide():
-        xoffset = playerRect[0] - currRect[0]
-        yoffset = playerRect[1] - currRect[1]
+        xoffset = currRect[0] - playerRect[0]
+        yoffset = currRect[1] - playerRect[1]
 
         leftmask = playerMask
         rightmask = currMask
 
-        return leftmask.overlap(rightmask, (xoffset*1.2, yoffset*1.2))
+        return leftmask.overlap(rightmask, (xoffset, yoffset))
 
     run = True
     while run:
