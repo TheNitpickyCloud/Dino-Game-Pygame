@@ -216,7 +216,7 @@ def main():
 
         # background and ground
         screen.fill((255, 255, 255))
-        pygame.draw.line(screen, '#000000', (0, 628), (1280, 628), 1)
+        pygame.draw.line(screen, '#000000', (0, 600), (1280, 600), 1)
 
         # score display
         text = font.render(str(int(score)), True, '#000000', '#FFFFFF')
@@ -226,6 +226,7 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
                 saveScore()
+                pygame.quit()
                 sys.exit(0)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
@@ -322,6 +323,7 @@ while running:
             if event.type == pygame.QUIT:
                 running = False
                 saveScore()
+                pygame.quit()
                 sys.exit(0)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos  # gets mouse position
@@ -367,6 +369,7 @@ while running:
         for event in events:
             if event.type == pygame.QUIT:
                 running = False
+                pygame.quit()
                 sys.exit(0)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos  # gets mouse position
