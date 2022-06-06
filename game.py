@@ -95,7 +95,6 @@ def main():
         nonlocal curr
         nonlocal playerMask
         nonlocal down
-        nonlocal playerRect
         if down == False:
             if curr <= 15:
                 screen.blit(playerImg[0], (x, y))
@@ -136,7 +135,7 @@ def main():
     currRect = currImg.get_rect()
     obsCurr = 0
 
-    def obstacle(x, y):
+    def obstacle(x):
         nonlocal cactusY
         nonlocal birdY
         nonlocal obsY
@@ -147,7 +146,7 @@ def main():
         nonlocal obsCurr
         global score
 
-        if x <= -64:
+        if x <= -128:
             if score >= 500:
                 num = random.randint(0, 1)
                 if num == 0:
@@ -193,7 +192,7 @@ def main():
     cloudMove = 0.1
     def cloud():
         for i in range(6):
-            if cloudXs[i] <= -64:
+            if cloudXs[i] <= -128:
                 cloudXs[i] = 1280
             screen.blit(cloudImgs[i], (cloudXs[i], cloudYs[i]))
 
@@ -229,9 +228,9 @@ def main():
                 saveScore()
                 sys.exit(0)
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
                     # jump
-                    if not jumping:
+                    if not jumping and not down:
                         pygame.mixer.music.load('assets/jump-sound.mp3')
                         pygame.mixer.music.play(0)
                         jumping = True
@@ -272,7 +271,7 @@ def main():
 
         cloud()
         player(playerX, playerY)
-        obstacle(obsX, obsY)
+        obstacle(obsX)
 
         playerRect.center = playerX+64, playerY+64
         currRect.center = obsX+64, obsY+64
@@ -336,6 +335,9 @@ while running:
                 if event.key == pygame.K_RETURN:
                     saveScore()
                     stage = 0
+                if event.key == pygame.K_ESCAPE:
+                    saveScore()
+                    stage = 2
     
     else:
         # login with id
